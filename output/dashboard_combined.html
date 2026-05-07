@@ -88,7 +88,10 @@ code{background:var(--s3);border:1px solid var(--bd);padding:2px 6px;border-radi
     <div><div class="hdr-title">Azure FinOps Dashboard</div><div class="hdr-sub" id="sub-text">DSS_CX_PROD</div></div>
     <span class="eur-badge">€ EUR</span>
   </div>
-  <div class="mstrip" id="mstrip"></div>
+  <div style="display:flex;align-items:center;gap:8px">
+    <label style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.08em">Month</label>
+    <select id="mselect" onchange="sm(parseInt(this.value))" style="background:var(--s2);border:1px solid var(--b2);color:var(--tx);padding:5px 10px;border-radius:5px;font-size:12px;font-family:var(--sans);outline:none;cursor:pointer"></select>
+  </div>
 </div>
 
 <div class="main">
@@ -112,9 +115,9 @@ code{background:var(--s3);border:1px solid var(--bd);padding:2px 6px;border-radi
       <div class="cb"><h3>Total cost per tenant</h3><div class="cb-sub">Own resources + equal share of common infra (EUR)</div><div style="position:relative;height:300px"><canvas id="c-tenant-bar"></canvas></div></div>
       <div class="cb"><h3>Own vs shared stack</h3><div class="cb-sub">Blue = tenant-specific · Orange = shared allocation</div><div style="position:relative;height:300px"><canvas id="c-stacked"></canvas></div></div>
     </div>
-    <div class="g2" id="overview-shared-trend-g2">
+    <div class="g2">
       <div class="cb"><h3>Shared RG distribution</h3><div class="cb-sub">How the shared pool breaks down by resource group</div><div style="position:relative;height:260px"><canvas id="c-sh-donut"></canvas></div></div>
-      <div class="cb" id="overview-trend-card"><h3>Monthly cost trend</h3><div class="cb-sub">Total subscription cost across all loaded months</div><div style="position:relative;height:260px"><canvas id="c-trend"></canvas></div></div>
+      <div class="cb"><h3>Monthly cost trend</h3><div class="cb-sub">Total subscription cost across all loaded months</div><div style="position:relative;height:260px"><canvas id="c-trend"></canvas></div></div>
     </div>
   </div>
 
@@ -126,7 +129,7 @@ code{background:var(--s3);border:1px solid var(--bd);padding:2px 6px;border-radi
       <div class="cb"><h3>Tenant count growth</h3><div class="cb-sub">Active tenant RGs per month</div><div style="position:relative;height:240px"><canvas id="c-growth"></canvas></div></div>
     </div>
     <div class="cb" style="margin-bottom:16px"><h3>Month-over-month table</h3><div id="mom-tbl"></div></div>
-    <div class="cb"><h3>Per-tenant cost across months</h3><div class="cb-sub">Tenants present in all months shown</div><div style="position:relative;height:280px"><canvas id="c-tenant-mom"></canvas></div></div>
+    <div class="cb" id="tenant-mom-box"><h3>Per-tenant cost across months</h3><div class="cb-sub">Tenants present in all months shown</div><div style="position:relative;height:280px"><canvas id="c-tenant-mom"></canvas></div></div>
   </div>
 
   <!-- TENANTS -->
@@ -191,11 +194,26 @@ code{background:var(--s3);border:1px solid var(--bd);padding:2px 6px;border-radi
       <div class="is"><div class="in">7</div><div>Open the new file in <code>output/</code> — share it by email, Teams, or SharePoint</div></div>
     </div>
     <div class="inst">
-      <h4>📤 How to share this dashboard</h4>
-      <div class="is"><div class="in">A</div><div><strong>Email:</strong> Attach the HTML file. Recipients open it in any browser — Chrome, Edge, Safari. Works offline. No login needed.</div></div>
-      <div class="is"><div class="in">B</div><div><strong>Microsoft Teams:</strong> Upload to a channel Files tab or paste as a chat attachment. Click to open in browser.</div></div>
-      <div class="is"><div class="in">C</div><div><strong>SharePoint / OneDrive:</strong> Upload → Share link → paste in email or Teams. The file opens in browser from the link.</div></div>
-      <div class="is"><div class="in">D</div><div><strong>Network drive:</strong> Copy to a shared drive → send the UNC path. Anyone on the network opens it in their browser.</div></div>
+      <h4>🌐 Option A · Vercel (Recommended — free, permanent URL)</h4>
+      <div class="is"><div class="in">1</div><div>Go to <strong>vercel.com</strong> → Sign Up free (use your email or GitHub)</div></div>
+      <div class="is"><div class="in">2</div><div>Click <strong>Add New → Project</strong> → drag and drop your <code>output/</code> folder into the upload area</div></div>
+      <div class="is"><div class="in">3</div><div>Vercel detects <code>index.html</code> automatically → click <strong>Deploy</strong></div></div>
+      <div class="is"><div class="in">4</div><div>Your permanent URL is ready: <code>https://your-project.vercel.app</code> — share this with clients and managers</div></div>
+      <div class="is"><div class="in">5</div><div><strong>Every month:</strong> run script → go to Vercel → your project → <strong>Deployments → Upload</strong> → drop new <code>output/</code> folder → URL stays the same</div></div>
+    </div>
+    <div class="inst">
+      <h4>🐙 Option B · GitHub Pages (free with public repo)</h4>
+      <div class="is"><div class="in">1</div><div>Create a free account at <strong>github.com</strong> → New repository → name it <code>finops-dashboard</code></div></div>
+      <div class="is"><div class="in">2</div><div>Upload <code>index.html</code> from your <code>output/</code> folder to the repo root (drag and drop on the web UI)</div></div>
+      <div class="is"><div class="in">3</div><div>Go to <strong>Settings → Pages → Branch: main → Save</strong></div></div>
+      <div class="is"><div class="in">4</div><div>URL is live at: <code>https://yourusername.github.io/finops-dashboard/</code></div></div>
+      <div class="is"><div class="in">5</div><div><strong>Every month:</strong> run script → upload new <code>index.html</code> → click <strong>Commit</strong> → URL auto-updates in ~1 minute</div></div>
+      <div class="is"><div class="in">⚠</div><div>Free GitHub Pages requires a <strong>public</strong> repository. If cost data is sensitive, use Vercel instead (URL is not guessable).</div></div>
+    </div>
+    <div class="inst">
+      <h4>📤 Other sharing options</h4>
+      <div class="is"><div class="in">A</div><div><strong>Email:</strong> Attach <code>index.html</code> directly — opens in any browser offline, no login needed</div></div>
+      <div class="is"><div class="in">B</div><div><strong>Teams / SharePoint:</strong> Upload to channel Files tab → share link in chat</div></div>
     </div>
     <div class="cb"><h3>Loaded data status</h3><div class="tw" id="status-tbl"></div></div>
   </div>
@@ -208,7 +226,7 @@ const CI = {};
 const TC = ['#3b82f6','#10b981','#8b5cf6','#f59e0b','#ef4444','#06b6d4','#22d3ee','#a78bfa','#f97316','#f87171','#0ea5e9','#34d399','#c084fc','#fb923c'];
 const SC = ['#f59e0b','#3b82f6','#8b5cf6','#10b981','#ef4444','#06b6d4','#e879f9'];
 
-const cur = () => DB.months[mi];
+const cur = () => mi === -1 ? DB.months[DB.months.length-1] : DB.months[mi];
 const fe  = n  => '€' + Number(n).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2});
 const fs  = n  => '€' + Math.round(Number(n)).toLocaleString('en-GB');
 const ts  = s  => s ? s.substring(0,8)+'…' : '?';
@@ -217,14 +235,56 @@ document.addEventListener('DOMContentLoaded',()=>{
   document.getElementById('sub-text').textContent =
     'DSS_CX_PROD · Generated ' + new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
   if(DB.has_simulated) document.getElementById('banner').style.display='flex';
-  rStrip(); rAll();
+  // Default to "All Months" combined view when multiple months are loaded
+  if(DB.months.length > 1){ mi = -1; }
+  rStrip();
+  if(mi === -1){ sw('mom'); rMom(); renderCards_combined(); }
+  else { rAll(); }
 });
 
 function rStrip(){
-  document.getElementById('mstrip').innerHTML = DB.months.map((m,i)=>
-    `<button class="mbtn ${i===mi?'active':''}" onclick="sm(${i})">${m.label}</button>`).join('');
+  const sel = document.getElementById('mselect');
+  const cur = sel.value;
+  sel.innerHTML = DB.months.map((m,i)=>
+    `<option value="${i}" ${i===mi?'selected':''}>${m.label}</option>`
+  ).join('') + `<option value="-1" ${mi===-1?'selected':''}>All Months (Combined)</option>`;
 }
-function sm(i){ mi=i; rStrip(); rAll(); }
+function sm(i){
+  mi = parseInt(i);
+  rStrip();
+  if(mi === -1){
+    // Combined view: show the MoM tab automatically
+    sw('mom');
+    rMom();
+    renderCards_combined();
+  } else {
+    rAll();
+  }
+}
+function renderCards_combined(){
+  const last = DB.months[DB.months.length-1];
+  const first = DB.months[0];
+  document.getElementById('cards').innerHTML = `
+    <div class="card" style="--ca:var(--ac)"><div class="cl">Months loaded</div>
+      <div class="cv" style="font-size:18px">${DB.months.length}</div>
+      <div class="cs">${first.label} → ${last.label}</div></div>
+    <div class="card" style="--ca:var(--or)"><div class="cl">Latest total</div>
+      <div class="cv" style="font-size:18px">${fe(last.total_eur)}</div>
+      <div class="cs">${last.label}</div></div>
+    <div class="card" style="--ca:var(--gn)"><div class="cl">MoM change</div>
+      <div class="cv" style="font-size:18px">${DB.mom[DB.mom.length-1].delta_pct!==null?(DB.mom[DB.mom.length-1].delta_pct>0?'+':'')+DB.mom[DB.mom.length-1].delta_pct+'%':'—'}</div>
+      <div class="cs">vs previous month</div></div>
+    <div class="card" style="--ca:var(--pu)"><div class="cl">Tenant growth</div>
+      <div class="cv" style="font-size:18px">${first.n_tenants} → ${last.n_tenants}</div>
+      <div class="cs">${first.label} → ${last.label}</div></div>
+    <div class="card" style="--ca:var(--a2)"><div class="cl">Active tenants</div>
+      <div class="cv" style="font-size:18px">${last.n_tenants}</div>
+      <div class="cs">Latest month</div></div>
+    <div class="card" style="--ca:var(--or)"><div class="cl">Latest per tenant</div>
+      <div class="cv" style="font-size:18px">${fe(last.total_eur/last.n_tenants)}</div>
+      <div class="cs">Incl. shared allocation</div></div>
+  `;
+}
 
 function rAll(){
   const m = cur();
@@ -273,22 +333,12 @@ function rOverview(m){
       plugins:{legend:{position:'right',labels:{color:'#8899b4',font:{size:9},boxWidth:8}},
         tooltip:{callbacks:{label:c=>c.label+': '+fe(c.raw)}}}}});
 
-  const trendG2 = document.getElementById('overview-shared-trend-g2');
-  const trendCard = document.getElementById('overview-trend-card');
-  if(DB.months.length < 2){
-    dc('c-trend');
-    if(trendCard) trendCard.style.display='none';
-    if(trendG2) trendG2.style.gridTemplateColumns='1fr';
-  }else{
-    if(trendCard) trendCard.style.display='';
-    if(trendG2) trendG2.style.gridTemplateColumns='';
-    dc('c-trend');
-    CI['c-trend']=new Chart(document.getElementById('c-trend'),{type:'line',
-      data:{labels:DB.months.map(m=>m.label),datasets:[
-        {label:'Total',data:DB.months.map(m=>m.total_eur),borderColor:'#3b82f6',backgroundColor:'#3b82f615',fill:true,tension:.3,pointRadius:5,pointBackgroundColor:'#3b82f6',pointBorderColor:'#fff',pointBorderWidth:2},
-        {label:'Shared',data:DB.months.map(m=>m.shared_total_eur),borderColor:'#f59e0b',backgroundColor:'transparent',borderDash:[4,2],tension:.3,pointRadius:4},
-      ]},options:{...opts(false),plugins:{legend:{labels:{color:'#8899b4',font:{size:10}}},tooltip:{callbacks:{label:c=>c.dataset.label+': '+fe(c.raw)}}}}});
-  }
+  dc('c-trend');
+  CI['c-trend']=new Chart(document.getElementById('c-trend'),{type:'line',
+    data:{labels:DB.months.map(m=>m.label),datasets:[
+      {label:'Total',data:DB.months.map(m=>m.total_eur),borderColor:'#3b82f6',backgroundColor:'#3b82f615',fill:true,tension:.3,pointRadius:5,pointBackgroundColor:'#3b82f6',pointBorderColor:'#fff',pointBorderWidth:2},
+      {label:'Shared',data:DB.months.map(m=>m.shared_total_eur),borderColor:'#f59e0b',backgroundColor:'transparent',borderDash:[4,2],tension:.3,pointRadius:4},
+    ]},options:{...opts(false),plugins:{legend:{labels:{color:'#8899b4',font:{size:10}}},tooltip:{callbacks:{label:c=>c.dataset.label+': '+fe(c.raw)}}}}});
 }
 
 function opts(stack){return{responsive:true,maintainAspectRatio:false,
@@ -298,6 +348,9 @@ function ax(){return{ticks:{color:'#8899b4',font:{size:9},maxTicksLimit:14},grid
 function ay(){return{ticks:{color:'#8899b4',callback:v=>fs(v),font:{size:10}},grid:{color:'#1a2440'}};}
 
 function rMom(){
+  // Hide the cross-month tenant chart when viewing a single month
+  const tenantMomBoxOuter = document.getElementById('tenant-mom-box');
+  if(tenantMomBoxOuter) tenantMomBoxOuter.style.display = (mi === -1 || DB.months.length > 1) ? '' : 'none';
   const mc = DB.mom;
   const lat = mc[mc.length-1]; const prv = mc[mc.length-2]||{};
   document.getElementById('mom-cards').innerHTML=[
