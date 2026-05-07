@@ -115,9 +115,9 @@ code{background:var(--s3);border:1px solid var(--bd);padding:2px 6px;border-radi
       <div class="cb"><h3>Total cost per tenant</h3><div class="cb-sub">Own resources + equal share of common infra (EUR)</div><div style="position:relative;height:300px"><canvas id="c-tenant-bar"></canvas></div></div>
       <div class="cb"><h3>Own vs shared stack</h3><div class="cb-sub">Blue = tenant-specific · Orange = shared allocation</div><div style="position:relative;height:300px"><canvas id="c-stacked"></canvas></div></div>
     </div>
-    <div class="g2">
+    <div class="g2" id="overview-shared-trend-g2">
       <div class="cb"><h3>Shared RG distribution</h3><div class="cb-sub">How the shared pool breaks down by resource group</div><div style="position:relative;height:260px"><canvas id="c-sh-donut"></canvas></div></div>
-      <div class="cb"><h3>Monthly cost trend</h3><div class="cb-sub">Total subscription cost across all loaded months</div><div style="position:relative;height:260px"><canvas id="c-trend"></canvas></div></div>
+      <div class="cb" id="overview-trend-card"><h3>Monthly cost trend</h3><div class="cb-sub">Total subscription cost across all loaded months</div><div style="position:relative;height:260px"><canvas id="c-trend"></canvas></div></div>
     </div>
   </div>
 
@@ -333,6 +333,18 @@ function rOverview(m){
       plugins:{legend:{position:'right',labels:{color:'#8899b4',font:{size:9},boxWidth:8}},
         tooltip:{callbacks:{label:c=>c.label+': '+fe(c.raw)}}}}});
 
+  const trendG2 = document.getElementById('overview-shared-trend-g2');
+  const trendCard = document.getElementById('overview-trend-card');
+  const showTrendComparison = (mi === -1 && DB.months.length > 1);
+  if(!showTrendComparison){
+    dc('c-trend');
+    if(trendCard) trendCard.style.display='none';
+    if(trendG2) trendG2.style.gridTemplateColumns='1fr';
+    return;
+  }
+
+  if(trendCard) trendCard.style.display='';
+  if(trendG2) trendG2.style.gridTemplateColumns='';
   dc('c-trend');
   CI['c-trend']=new Chart(document.getElementById('c-trend'),{type:'line',
     data:{labels:DB.months.map(m=>m.label),datasets:[
